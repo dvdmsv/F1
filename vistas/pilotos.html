@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap-grid.css">
+    <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css">
+    <script src="../node_modules/jquery/dist/jquery.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    <title>Pilotos</title>
+    <style>
+        .card {
+            text-align: center;
+        }
+
+        .card-text {
+            text-align: start;
+        }
+
+        .card:hover {
+            background: #fff;
+            box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.50);
+            -webkit-transition: all 0.2s ease-in;
+            -moz-transition: all 0.2s ease-in;
+            -ms-transition: all 0.2s ease-in;
+            -o-transition: all 0.2s ease-in;
+            transition: all 0.2s ease-in;
+            transform: scale(1.05);
+            margin: 5px 0 5px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg shadow-sm p-1 mb-5 bg-body rounded sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="../index.html"><img src="../img/f1Logo3.png" alt="f1Logo" width="90"></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Dropdown
+                        </a>
+                        <ul class="dropdown-menu bg-secondary">
+                            <li><a class="dropdown-item" href="#">Action</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled">Disabled</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <form>
+                <div class="form-group">
+                    <label>Año</label>
+                    <input type="number" name="temporada" id="temporada" min="1950">
+                </div>
+                <button type="button" class="btn btn-primary mt-3" id="buscar">Buscar</button>
+            </form>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Piloto</th>
+          </tr>
+        </thead>
+        <tbody id="datos">
+        </tbody>
+      </table>
+
+    <script>
+        $("#buscar").click(()=>{
+            let temporada = $("#temporada").val();
+            //let temporada = document.getElementById("temporada");
+            console.log(temporada);
+            $.getJSON(`http://ergast.com/api/f1/${temporada}/drivers.json`, (respuesta)=>{
+            //$.getJSON(`http://ergast.com/api/f1/2022/drivers.json`, (respuesta)=>{
+                //console.log(respuesta.MRData.DriverTable);
+                for (const piloto of respuesta.MRData.DriverTable.Drivers) {
+                    console.log(piloto.familyName);
+                    $("#datos").append(`<tr><td>${piloto.familyName}<td></tr>`);
+                }
+            })
+        });
+    </script>
+
+
+</body>
+
+</html>
