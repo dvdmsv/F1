@@ -103,11 +103,13 @@
             let temporada = $("#temporada").val();
             //let temporada = document.getElementById("temporada");
             console.log(temporada);
-            $.getJSON(`http://ergast.com/api/f1/${temporada}/drivers.json`, (respuesta)=>{
-            //$.getJSON(`http://ergast.com/api/f1/2022/drivers.json`, (respuesta)=>{
+            $.getJSON(`https://ergast.com/api/f1/${temporada}/drivers.json`, (respuesta)=>{
+            //$.getJSON(`https://ergast.com/api/f1/2022/drivers.json`, (respuesta)=>{
                 //console.log(respuesta.MRData.DriverTable);
+                $("#datos").empty();
                 for (const piloto of respuesta.MRData.DriverTable.Drivers) {
-                    console.log(piloto.familyName);
+                    //console.log(piloto.familyName);
+                    
                     $("#datos").append(`<tr><td>${piloto.familyName}<td></tr>`);
                 }
             })
