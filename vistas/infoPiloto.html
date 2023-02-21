@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css">
     <script src="../node_modules/jquery/dist/jquery.js"></script>
     <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
-    <title>Pilotos</title>
+    <title>Info Piloto</title>
     <style>
         .card {
             text-align: center;
@@ -81,22 +81,13 @@
             </div>
         </div>
     </nav>
-
     <div class="container">
-        <div class="row justify-content-center">
-            <form>
-                <div class="form-group">
-                    <label>Año</label>
-                    <input type="number" name="temporada" id="temporada" min="1950">
-                </div>
-                <button type="button" class="btn btn-primary mt-3" id="buscar">Buscar</button>
-            </form>
-        </div>
+        <div class="d-grid gap-2 col-6 mx-auto">
+            <button class="btn btn-primary" id="resultados" type="button">Resultados</button>
+            <button class="btn btn-primary" type="button">Button</button>
+          </div>
     </div>
-
-    <div class="container" id="datos">
-
-    </div>
+    
 
     <!-- <table class="table">
         <thead>
@@ -107,44 +98,28 @@
         </thead>
         <tbody id="datos">
         </tbody>
-      </table> -->
+    </table> -->
 
     <script>
-        // $("#buscar").click(()=>{
-        //     let temporada = $("#temporada").val();
-        //     $.getJSON(`https://ergast.com/api/f1/${temporada}/drivers.json`, (respuesta)=>{
-        //         $("#datos").empty();
-        //         for (const piloto of respuesta.MRData.DriverTable.Drivers) {
-        //             $("#datos").append(`
-        //             <tr>
-        //                 <td><a href="${piloto.url}">${piloto.givenName} ${piloto.familyName}</a></td>
-        //                 <td></td>
-        //             </tr>`);
-        //         }
-        //     })
-        // });
+        $("#resultados").click(()=>{
+            let valoresURL = window.location.search;
+            let paramURL = new URLSearchParams(valoresURL);
+            let id = paramURL.get('id');
+            $.getJSON(`https://ergast.com/api/f1/drivers/${id}/results.json`, (respuesta)=>{
+                console.log(respuesta);
 
-        $("#buscar").click(()=>{
-            let temporada = $("#temporada").val();
-            //$.getJSON(`https://ergast.com/api/f1/${temporada}/drivers.json`, (respuesta)=>{
-            $.getJSON(`https://ergast.com/api/f1/2022/drivers.json`, (respuesta)=>{
-                $("#datos").empty();
-                for (const piloto of respuesta.MRData.DriverTable.Drivers) {
-                    $("#datos").append(`
-                    <div class="row mt-3">
-                    <div class="card m-5" style="width: 50%;">
-                        <div class="card-body">
-                            <h5 class="card-title"><a href="./infoPiloto.html?id=${piloto.driverId}">${piloto.familyName}</a></h5>
-                            <p class="card-text">${piloto.givenName} ${piloto.familyName}</p>
-                            <p class="card-text">Nacionalidad: ${piloto.nationality}</p>
-                            <p class="card-text">Número: ${piloto.permanentNumber}</p>
-                            <a href="${piloto.url}" class="btn btn-primary">Wikipedia</a>
-                        </div>
-                    </div>
-                </div>`);
-                }
+
+                // $("#datos").empty();
+                // for (const piloto of respuesta.MRData.DriverTable.Drivers) {
+                //     $("#datos").append(`
+                //     <tr>
+                //         <td><a href="${piloto.url}">${piloto.givenName} ${piloto.familyName}</a></td>
+                //         <td></td>
+                //     </tr>`);
+                // }
             })
         });
+
     </script>
 
 
