@@ -31,14 +31,6 @@
             transform: scale(1.05);
             margin: 5px 0 5px 0;
         }
-
-        #datos{
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(5, 1fr);
-            grid-column-gap: 5px;
-            grid-row-gap: 5px;
-        }
     </style>
 </head>
 
@@ -88,35 +80,46 @@
           </div>
     </div>
     
-
-    <!-- <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Piloto</th>
-            <th scope="col">A</th>
-          </tr>
-        </thead>
-        <tbody id="datos">
-        </tbody>
-    </table> -->
+    <div class="container" id="tablaResultados">
+        
+    </div>
+    
 
     <script>
         $("#resultados").click(()=>{
+            $("#tablaResultados").empty();
+            $("#tablaResultados").append(`
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Temporada</th>
+                        <th scope="col">Circuito</th>
+                        <th scope="col">Equipo</th>
+                        <th scope="col">Posicion</th>
+                        <th scope="col">Puntos</th>
+                    </tr>
+                    </thead>
+                    <tbody id="datos">
+                    </tbody>
+                </table>
+
+            `);
+
             let valoresURL = window.location.search;
             let paramURL = new URLSearchParams(valoresURL);
             let id = paramURL.get('id');
-            $.getJSON(`https://ergast.com/api/f1/drivers/${id}/results.json`, (respuesta)=>{
-                console.log(respuesta);
-
-
-                // $("#datos").empty();
-                // for (const piloto of respuesta.MRData.DriverTable.Drivers) {
-                //     $("#datos").append(`
-                //     <tr>
-                //         <td><a href="${piloto.url}">${piloto.givenName} ${piloto.familyName}</a></td>
-                //         <td></td>
-                //     </tr>`);
-                // }
+            $.getJSON(`https://ergast.com/api/f1/drivers/${id}/results.json?limit=1000`, (respuesta)=>{
+                $("#datos").empty();
+                for (const carrera of respuesta.MRData.RaceTable.Races) {
+                    $("#datos").append(`
+                    <tr>
+                        <td>${carrera.season}</td>
+                        <td><a href="${carrera.Circuit.url}">${carrera.Circuit.circuitName}</a></td>
+                        <td>${carrera.Results[0].Constructor.name}</td>
+                        <td>${carrera.Results[0].position}</td>
+                        <td>${carrera.Results[0].points}</td>
+                    </tr>`);
+                }
             })
         });
 
