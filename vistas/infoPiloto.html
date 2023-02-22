@@ -148,7 +148,7 @@
             let valoresURL = window.location.search;
             let paramURL = new URLSearchParams(valoresURL);
             let id = paramURL.get('id');
-            $.getJSON(`http://ergast.com/api/f1/drivers/${id}/driverStandings.json`, (respuesta) => {
+            $.getJSON(`https://ergast.com/api/f1/drivers/${id}/driverStandings.json`, (respuesta) => {
                 $("#tablaResultados").pagination({
                     dataSource: respuesta.MRData.StandingsTable,
                     locator: 'StandingsLists',
