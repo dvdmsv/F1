@@ -3,6 +3,7 @@
     "bootstrap": "^5.2.3",
     "chart.js": "^4.2.1",
     "jquery": "^3.6.3",
-    "leaflet": "^1.9.3"
+    "leaflet": "^1.9.3",
+    "paginationjs": "^2.5.0"
   }
 }

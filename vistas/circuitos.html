@@ -57,7 +57,7 @@
     <div class="container">
         <div class="d-grid gap-2 col-6 mx-auto">
             <button class="btn btn-primary" id="resultados" type="button">Resultados</button>
-            <button class="btn btn-primary" id="temporadas" type="button">Temporadas</button>
+            <button class="btn btn-primary" type="button">Button</button>
         </div>
     </div>
 
@@ -89,7 +89,7 @@
                     <tr>
                         <th scope="col">Temporada</th>
                         <th scope="col">Circuito</th>
-                        <th scope="col">Escudería</th>
+                        <th scope="col">Equipo</th>
                         <th scope="col">Posicion</th>
                         <th scope="col">Puntos</th>
                     </tr>
@@ -103,7 +103,7 @@
             let valoresURL = window.location.search;
             let paramURL = new URLSearchParams(valoresURL);
             let id = paramURL.get('id');
-            $.getJSON(`https://ergast.com/api/f1/drivers/${id}/results.json`, (respuesta) => {
+            $.getJSON(`https://ergast.com/api/f1/drivers/${id}/results.json?limit=1000`, (respuesta) => {
                 $("#tablaResultados").pagination({
                     dataSource: respuesta.MRData.RaceTable,
                     locator: 'Races',
@@ -125,53 +125,6 @@
                 });
             });
         });
-
-        $("#temporadas").click(() => {
-            $("#tablaResultados").empty();
-            $("#tablaResultados").append(`
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th scope="col">Temporada</th>
-                        <th scope="col">Posicion</th>
-                        <th scope="col">Carreras Ganadas</th>
-                        <th scope="col">Puntos</th>
-                        <th scope="col">Escudería</th>
-                    </tr>
-                    </thead>
-                    <tbody id="datos">
-                    </tbody>
-                </table>
-            `);
-            
-            let size = $("#size").val();
-            let valoresURL = window.location.search;
-            let paramURL = new URLSearchParams(valoresURL);
-            let id = paramURL.get('id');
-            $.getJSON(`http://ergast.com/api/f1/drivers/${id}/driverStandings.json`, (respuesta) => {
-                $("#tablaResultados").pagination({
-                    dataSource: respuesta.MRData.StandingsTable,
-                    locator: 'StandingsLists',
-                    pageSize: size,
-                    callback: function (data, pagination) {
-                        let datos = $("#datos").empty();
-                        $.each(data, function (i, f) {
-                            $("#datos").append(`
-                            <tr>
-                                <td>${f.season}</td>
-                                <td>${f.DriverStandings[0].position}</td>
-                                <td>${f.DriverStandings[0].wins}</td>
-                                <td>${f.DriverStandings[0].points}</td>
-                                <td>${f.DriverStandings[0].Constructors[0].name}</td>
-                            </tr>
-                            `);
-                        });
-                    }
-                });
-            });
-        });
-
-        
     </script>
 
 
