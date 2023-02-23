@@ -29,7 +29,7 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="../index.html">Inicio</a>
-                      </li>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="circuitos.html">Circuitos</a>
                     </li>
@@ -45,8 +45,12 @@
     </nav>
     <a href="./pilotos.html" class="btn btn-secondary btn-sm">Atrás</a>
 
+    <div class="container mb-5" id="titulo">
+    </div>
+
     <div class="container" style="text-align: center;">
-        <p class="h6">Ya has elegido un piloto, ahora descubre su histórico de resultados o las temporadas en las que compitió.</p>
+        <p class="h6">Ya has elegido un piloto, ahora descubre su histórico de resultados o las temporadas en las que
+            compitió.</p>
     </div>
     <div class="container">
         <div class="d-grid gap-2 col-6 mx-auto">
@@ -69,12 +73,22 @@
         </select>
     </div>
 
+
     <div class="container" id="tablaResultados">
 
     </div>
 
 
     <script>
+        let valoresURL = window.location.search;
+        let paramURL = new URLSearchParams(valoresURL);
+        let id = paramURL.get('id');
+        let name = paramURL.get('name');
+        $("#titulo").empty();
+        $("#titulo").append(`
+                <h1 class="display-1" style="text-align: center;">${name}</h1>
+                
+                `);
         $("#resultados").click(() => {
             $("#tablaResultados").empty();
             $("#tablaResultados").append(`
@@ -94,10 +108,9 @@
             `);
             
             let size = $("#size").val();
-            let valoresURL = window.location.search;
-            let paramURL = new URLSearchParams(valoresURL);
-            let id = paramURL.get('id');
+
             $.getJSON(`https://ergast.com/api/f1/drivers/${id}/results.json?limit=1000`, (respuesta) => {
+
                 $("#tablaResultados").pagination({
                     dataSource: respuesta.MRData.RaceTable,
                     locator: 'Races',
@@ -137,12 +150,13 @@
                     </tbody>
                 </table>
             `);
-            
+
             let size = $("#size").val();
             let valoresURL = window.location.search;
             let paramURL = new URLSearchParams(valoresURL);
             let id = paramURL.get('id');
-            $.getJSON(`https://ergast.com/api/f1/drivers/${id}/driverStandings.json?limit=1000`, (respuesta) => {
+            $.getJSON(`https://ergast.com/api/f1/drivers/${id}/driverStandings.json?limit=1000`, (
+                respuesta) => {
                 $("#tablaResultados").pagination({
                     dataSource: respuesta.MRData.StandingsTable,
                     locator: 'StandingsLists',
@@ -164,8 +178,6 @@
                 });
             });
         });
-
-        
     </script>
 
 
