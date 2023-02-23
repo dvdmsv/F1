@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap-grid.css">
+    <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css">
+    <link rel="stylesheet" href="../node_modules/paginationjs/dist/pagination.css">
+    <script src="../node_modules/jquery/dist/jquery.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    <script src="../node_modules/paginationjs/dist/pagination.js"></script>
+    <script src="../node_modules/leaflet/dist/leaflet.js"></script>
+    <title>Info Piloto</title>
+    <style>
+        #mapa {
+            height: 500px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg shadow-sm p-1 mb-5 bg-body rounded sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="../index.html"><img src="../img/f1Logo3.png" alt="f1Logo" width="90"></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="../index.html">Inicio</a>
+                      </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="pilotos.html">Pilotos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="escuderias.html">Escuderías</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="temporada.html">Temporada en curso</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <a href="./circuitos.html" class="btn btn-secondary btn-sm m-5">Atrás</a>
+
+    <div class="container mb-5" id="titulo">
+    </div>
+    
+
+    <!-- Mapa -->
+    <div class="container" id="mapa">
+    </div>
+
+    <script>
+        let valoresURL = window.location.search;
+        let paramURL = new URLSearchParams(valoresURL);
+        let id = paramURL.get('id');
+        $(document).ready(() => {
+            $.getJSON(`https://ergast.com/api/f1/circuits/${id}.json`, (respuesta) => {
+                $("#titulo").empty();
+                $("#titulo").append(`
+                <h1 class="display-1" style="text-align: center;">${respuesta.MRData.CircuitTable.Circuits[0].circuitName}</h1>
+                <h1 class="display-6" style="text-align: center;">${respuesta.MRData.CircuitTable.Circuits[0].Location.country}</h1>
+                `);
+
+                //Mapa
+                let lat = respuesta.MRData.CircuitTable.Circuits[0].Location.lat;
+                let long = respuesta.MRData.CircuitTable.Circuits[0].Location.long
+                var map = L.map('mapa').setView([lat, long], 15);
+
+                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
+                }).addTo(map);
+
+                var marker = L.marker([lat, long]).addTo(map);
+                marker.bindPopup(
+                    `<a href="${respuesta.MRData.CircuitTable.Circuits[0].url}" target="_blank"><b>${respuesta.MRData.CircuitTable.Circuits[0].circuitName}</b></a>`
+                    ).openPopup();
+            });
+        });
+    </script>
+
+
+
+</body>
+
+</html>
