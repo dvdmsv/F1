@@ -12,6 +12,7 @@
     <script src="../node_modules/jquery/dist/jquery.js"></script>
     <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
     <script src="../node_modules/paginationjs/dist/pagination.js"></script>
+    <script src="../node_modules/chart.js/dist/chart.umd.js"></script>
     <title>Info Piloto</title>
 </head>
 
@@ -73,9 +74,12 @@
         </select>
     </div>
 
+    <!-- Grafico -->
+    <div class="container" style="width: 30%;">
+        <canvas id="grafico"></canvas>
+    </div>
 
     <div class="container" id="tablaResultados">
-
     </div>
 
 
@@ -87,8 +91,9 @@
         $("#titulo").empty();
         $("#titulo").append(`
                 <h1 class="display-1" style="text-align: center;">${name}</h1>
-                
-                `);
+        `);
+
+        //Cuando se pulsa el botón para ver el histórico de resultados
         $("#resultados").click(() => {
             $("#tablaResultados").empty();
             $("#tablaResultados").append(`
@@ -106,11 +111,10 @@
                     </tbody>
                 </table>
             `);
-            
+
             let size = $("#size").val();
 
             $.getJSON(`https://ergast.com/api/f1/drivers/${id}/results.json?limit=1000`, (respuesta) => {
-
                 $("#tablaResultados").pagination({
                     dataSource: respuesta.MRData.RaceTable,
                     locator: 'Races',
@@ -130,9 +134,54 @@
                         });
                     }
                 });
+                let totalResultados = respuesta.MRData.total;
+                let sumPosiciones = 0;
+                let mediaPosicion = 0;
+                let sumPuntos = 0;
+                let mediaPuntos = 0;
+
+                //Calcular la posicion y puntos de media del piloto
+                for (const posicion of respuesta.MRData.RaceTable.Races) {
+                    sumPosiciones = parseFloat(sumPosiciones) + parseFloat(posicion.Results[0].position);
+                    sumPuntos = parseFloat(sumPuntos) + parseFloat(posicion.Results[0].points);
+                }
+                mediaPosicion = sumPosiciones / totalResultados;
+                mediaPuntos = sumPuntos / totalResultados;
+
+                //Gráfico
+                const data = {
+                    labels: ["Media"],
+                    datasets: [{
+                        label: "Posición media",
+                        data: [mediaPosicion],
+                        borderWidth: 1
+                    }, {
+                        label: 'Media de puntos',
+                        data: [mediaPuntos],
+                    }]
+                };
+
+                //Configuración
+                let config = {
+                    type: 'bar',
+                    data: data,
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    },
+                };
+                let grafico = new Chart($("#grafico"), config);
+
             });
+
+
+            
         });
 
+        //Cuando se pulsa el botón para ver el histórico de temporadas
         $("#temporadas").click(() => {
             $("#tablaResultados").empty();
             $("#tablaResultados").append(`
