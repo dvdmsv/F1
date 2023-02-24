@@ -66,17 +66,24 @@
     <script>
         $(document).ready(() => {
             $.getJSON(`https://ergast.com/api/f1/seasons.json?limit=1000`, (respuesta) => {
+
+                //Ordenar el array de temporadas para mostrar de la mas nueva a la mas antigua
+                let arrTemp = respuesta.MRData.SeasonTable.Seasons.sort((a, b) => {
+                    if (a.season > b.season) {
+                        return -1
+                    }
+                });
+
                 $("#temporada").empty();
                 let numPilotos = respuesta.MRData.total;
-                for (const temporada of respuesta.MRData.SeasonTable.Seasons) {
-
+                for (const temporada of arrTemp) {
                     $("#temporada").append(`
                         <option>${temporada.season}</option>
                     `);
                 }
             });
-
         });
+
         $("#buscar").click(() => {
             let temporada = $("#temporada").val();
             $.getJSON(`https://ergast.com/api/f1/${temporada}/constructors.json?limit=1000`, (respuesta) => {
