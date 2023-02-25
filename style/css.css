@@ -26,6 +26,10 @@
     grid-row-gap: 5px;
 }
 
+#mapa {
+    height: 500px;
+}
+
 @media screen and (max-width: 1280px) {
     #datos{
         display: flex;

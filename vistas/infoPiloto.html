@@ -60,8 +60,7 @@
         </div>
     </div>
 
-
-
+    <!-- Tamaño de pagina -->
     <div class="container" id="selector">
         <select class="form-select mt-5" id="size" style="width: 25%;" aria-label="Default select example">
             <option value="5">5</option>
@@ -75,7 +74,7 @@
     </div>
 
     <!-- Grafico -->
-    <div class="container" style="width: 30%;">
+    <div class="container" style="width: 400px; text-align: center;" id="contenedorGrafico">
         <canvas id="grafico"></canvas>
     </div>
 
@@ -84,10 +83,13 @@
 
 
     <script>
+        //Se obtienen los parámetros pasados por la URL
         let valoresURL = window.location.search;
         let paramURL = new URLSearchParams(valoresURL);
         let id = paramURL.get('id');
         let name = paramURL.get('name');
+
+        //Se introduce en el documento un titulo con el nombre del piloto seleccionado
         $("#titulo").empty();
         $("#titulo").append(`
                 <h1 class="display-1" style="text-align: center;">${name}</h1>
@@ -95,6 +97,8 @@
 
         //Cuando se pulsa el botón para ver el histórico de resultados
         $("#resultados").click(() => {
+
+            //Se introduce una tabla en el documento
             $("#tablaResultados").empty();
             $("#tablaResultados").append(`
                 <table class="table">
@@ -111,10 +115,13 @@
                     </tbody>
                 </table>
             `);
-
+            
+            //Se recoge el tamaño seleccionado de página
             let size = $("#size").val();
-
+            
+            //Solicitud al servidor de los resultados dependiendo el id del piloto pasado por parámetros en la URL
             $.getJSON(`https://ergast.com/api/f1/drivers/${id}/results.json?limit=1000`, (respuesta) => {
+                //Se utiliza el plugin de paginación para paginar los resultados
                 $("#tablaResultados").pagination({
                     dataSource: respuesta.MRData.RaceTable,
                     locator: 'Races',
@@ -122,6 +129,7 @@
                     callback: function (data, pagination) {
                         let datos = $("#datos").empty();
                         $.each(data, function (i, f) {
+                            //Se van introduciendo los datos en el documento
                             $("#datos").append(`
                             <tr>
                                 <td>${f.season}</td>
@@ -134,6 +142,8 @@
                         });
                     }
                 });
+
+                //Variables para calcular la media de resultados del piloto
                 let totalResultados = respuesta.MRData.total;
                 let sumPosiciones = 0;
                 let mediaPosicion = 0;
@@ -174,7 +184,6 @@
                     },
                 };
                 let grafico = new Chart($("#grafico"), config);
-
             });
 
 
@@ -200,12 +209,10 @@
                 </table>
             `);
 
-            let size = $("#size").val();
-            let valoresURL = window.location.search;
-            let paramURL = new URLSearchParams(valoresURL);
-            let id = paramURL.get('id');
-            $.getJSON(`https://ergast.com/api/f1/drivers/${id}/driverStandings.json?limit=1000`, (
-                respuesta) => {
+            let size = $("#size").val(); //Se obtiene el tamaño de pagina seleccionado
+            //Peticion al servidor del json dependiendo el id del piloto
+            $.getJSON(`https://ergast.com/api/f1/drivers/${id}/driverStandings.json?limit=1000`, (respuesta) => {
+                //Se utiliza el plugin de paginación para paginar los resultados
                 $("#tablaResultados").pagination({
                     dataSource: respuesta.MRData.StandingsTable,
                     locator: 'StandingsLists',
@@ -213,6 +220,7 @@
                     callback: function (data, pagination) {
                         let datos = $("#datos").empty();
                         $.each(data, function (i, f) {
+                            //Se van introduciendo en la tabla
                             $("#datos").append(`
                             <tr>
                                 <td>${f.season}</td>

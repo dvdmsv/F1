@@ -46,6 +46,8 @@
     <div class="container">
         <p class="h6">Selecciona un año y descubre que escuderías corrían en esa temporada.</p>
     </div>
+
+    <!-- Contenedor con el desplegable y el botón para buscar -->
     <div class="container">
         <div class="row justify-content-center">
             <form>
@@ -59,12 +61,14 @@
         </div>
     </div>
 
+    <!-- Contenedor con los datos obtenidos -->
     <div class="container" id="datos">
-
     </div>
 
     <script>
+        //Cuando se cargue el documento
         $(document).ready(() => {
+            //Se solicita el json de temporadas
             $.getJSON(`https://ergast.com/api/f1/seasons.json?limit=1000`, (respuesta) => {
 
                 //Ordenar el array de temporadas para mostrar de la mas nueva a la mas antigua
@@ -74,8 +78,8 @@
                     }
                 });
 
+                //Se introducen las temporadas ordenadas de mayor a menor en el selector de temporadas
                 $("#temporada").empty();
-                let numPilotos = respuesta.MRData.total;
                 for (const temporada of arrTemp) {
                     $("#temporada").append(`
                         <option>${temporada.season}</option>
@@ -84,10 +88,13 @@
             });
         });
 
+        //Cuando se pulse en el botón de buscar
         $("#buscar").click(() => {
-            let temporada = $("#temporada").val();
+            let temporada = $("#temporada").val(); //Se obtiene la temporada seleccionada del selector
+            //Se solicita el servidor el json de la temporada seleccionada
             $.getJSON(`https://ergast.com/api/f1/${temporada}/constructors.json?limit=1000`, (respuesta) => {
                 $("#datos").empty();
+                //Se van introduciendo los resultados en el documento html
                 for (const constructor of respuesta.MRData.ConstructorTable.Constructors) {
                     $("#datos").append(`
                     <div class="row mt-3">

@@ -9,16 +9,12 @@
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap-grid.css">
     <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css">
     <link rel="stylesheet" href="../node_modules/paginationjs/dist/pagination.css">
+    <link rel="stylesheet" href="../style/css.css">
     <script src="../node_modules/jquery/dist/jquery.js"></script>
     <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
     <script src="../node_modules/paginationjs/dist/pagination.js"></script>
     <script src="../node_modules/leaflet/dist/leaflet.js"></script>
-    <title>Info Piloto</title>
-    <style>
-        #mapa {
-            height: 500px;
-        }
-    </style>
+    <title>Info Circuito</title>
 </head>
 
 <body>
@@ -50,8 +46,10 @@
         </div>
     </nav>
 
+    <!-- Botón para retroceder -->
     <a href="./circuitos.html" class="btn btn-secondary btn-sm m-4">Atrás</a>
 
+    <!-- Titulo del circuito -->
     <div class="container" id="titulo">
     </div>
     
@@ -61,29 +59,39 @@
     </div>
 
     <script>
+        //Se obtienen los parámetros de la URL
         let valoresURL = window.location.search;
         let paramURL = new URLSearchParams(valoresURL);
         let id = paramURL.get('id');
+
+        //Cuando el documento esté cargado
         $(document).ready(() => {
+            //Se solicita al servidor el json dependiendo del id pasado en la URL
             $.getJSON(`https://ergast.com/api/f1/circuits/${id}.json`, (respuesta) => {
                 $("#titulo").empty();
+                //Se introduce en el documento el nombre del circuito y el país
                 $("#titulo").append(`
                 <h1 class="display-1" style="text-align: center;">${respuesta.MRData.CircuitTable.Circuits[0].circuitName}</h1>
                 <h1 class="display-6" style="text-align: center;">${respuesta.MRData.CircuitTable.Circuits[0].Location.country}</h1>
                 `);
 
-                //Mapa
+                //Creación de un mapa que contendrá las coordenadas del circuito
+
+                //Se obtiene la latitud y la longitud del json
                 let lat = respuesta.MRData.CircuitTable.Circuits[0].Location.lat;
                 let long = respuesta.MRData.CircuitTable.Circuits[0].Location.long
-                var map = L.map('mapa').setView([lat, long], 15);
+                var map = L.map('mapa').setView([lat, long], 15); //Se establecen en el mapa
 
+                //Se crea y configura la capa del mapa
                 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     maxZoom: 19,
                     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
                 }).addTo(map);
 
+                //Se añade un marcador al mapa con la latitud y longitud obtenidas
                 var marker = L.marker([lat, long]).addTo(map);
                 marker.bindPopup(
+                    //El tecto del marcador será una URL que enlaza con wikipedia
                     `<a href="${respuesta.MRData.CircuitTable.Circuits[0].url}" target="_blank"><b>${respuesta.MRData.CircuitTable.Circuits[0].circuitName}</b></a>`
                     ).openPopup();
             });

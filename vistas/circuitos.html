@@ -44,19 +44,24 @@
         </div>
       </nav>
 
+      
       <div class="container">
         <p class="h6">Todos los circuitos donde se ha corrido alguna carrera de la F1. Pulsa en uno y descubre su ubicación.</p>
       </div>
-    <div class="container" id="resultados">
-        <div class="container" id="datos">
-
-        </div>
-    </div>
+      
+      <!-- Contenedor de las cartas con los circuitos -->
+      <div class="container" id="resultados">
+          <div class="container" id="datos">
+          </div>
+      </div>
 
 
     <script>
+        //Cuando se cargue el documento
         $(document).ready(()=>{
+            //Se solicita el json con todos los cirtucitos
             $.getJSON("https://ergast.com/api/f1/circuits.json?limit=1000", (respuesta)=>{
+                //Se llama al plugin de paginación 
                 $("#resultados").pagination({
                     dataSource: respuesta.MRData.CircuitTable,
                     locator: 'Circuits',
@@ -64,6 +69,7 @@
                     callback: function (data, pagination){
                         let datos = $("#datos").empty();
                         $.each(data, function (i, f){
+                            //Se van introduciendo los datos en el documento
                             $("#datos").append(`
                             <div class="row mt-3">
                                 <div class="card mx-auto" style="width: 50%;">
