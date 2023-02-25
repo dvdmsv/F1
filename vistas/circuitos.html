@@ -60,7 +60,7 @@
                 $("#resultados").pagination({
                     dataSource: respuesta.MRData.CircuitTable,
                     locator: 'Circuits',
-                    pageSize: 10,
+                    pageSize: 12,
                     callback: function (data, pagination){
                         let datos = $("#datos").empty();
                         $.each(data, function (i, f){
