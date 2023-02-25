@@ -43,7 +43,7 @@
         </div>
     </nav>
 
-    <div class="container">
+    <div class="container" id="info">
         <p class="h6">Selecciona un año y descubre los pilotos que competían en la categoría.</p>
     </div>
 
@@ -60,8 +60,7 @@
         </div>
     </div>
 
-    <div class="container" id="datos">
-
+    <div class="container" id="datos" style="display: none;">
     </div>
 
     <script>
@@ -97,7 +96,7 @@
                 for (const piloto of respuesta.MRData.DriverTable.Drivers) {
                     $("#datos").append(`
                     <div class="row mt-3">
-                    <div class="card mx-auto" style="width: 50%;">
+                    <div class="card mx-auto" style="width: 50%">
                         <div class="card-body">
                             <h5 class="card-title"><a href="./infoPiloto.html?id=${piloto.driverId}&name=${piloto.familyName}">${piloto.familyName}</a></h5>
                             <p class="card-text">${piloto.givenName} ${piloto.familyName}</p>
@@ -108,7 +107,10 @@
                     </div>
                 </div>`);
                 }
-            })
+                //Animación
+                $("#datos").fadeIn();
+            });
+            
         });
     </script>
 

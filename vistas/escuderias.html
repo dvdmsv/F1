@@ -62,7 +62,7 @@
     </div>
 
     <!-- Contenedor con los datos obtenidos -->
-    <div class="container" id="datos">
+    <div class="container" id="datos" style="display: none;">
     </div>
 
     <script>
@@ -107,7 +107,9 @@
                     </div>
                 </div>`);
                 }
-            })
+                //Animación
+                $("#datos").fadeIn();
+            });
         });
     </script>
 
