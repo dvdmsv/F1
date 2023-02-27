@@ -13,7 +13,7 @@
     <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
     <script src="../node_modules/paginationjs/dist/pagination.js"></script>
     <script src="../node_modules/chart.js/dist/chart.umd.js"></script>
-    <title>Info Piloto</title>
+    <title>Temporada en curso</title>
 </head>
 
 <body>
@@ -46,7 +46,7 @@
         </div>
     </nav>
     <div class="container" id="info">
-        <p class="h6">algo</p>
+        <p class="h6">La temporada actual. Escoge el GP para ver el resultado final y la clasifición hasta encontes.</p>
     </div>
 
     <div class="container">
@@ -80,7 +80,7 @@
             $.getJSON(`https://ergast.com/api/f1/current.json?limit=1000`, (respuesta) => {
                 for (const carrera of respuesta.MRData.RaceTable.Races) {
                     $("#carrera").append(`
-                        <option>${carrera.round}º ${carrera.Circuit.circuitName}</option>
+                        <option>${carrera.round} º  ${carrera.Circuit.circuitName}</option>
                     `);
                 }
             });
@@ -104,7 +104,6 @@
                         <th scope="col">Piloto</th>
                         <th scope="col">Escudería</th>
                         <th scope="col">Pos. Salida</th>
-                        <th scope="col">Tiempo</th>
                         <th scope="col">Status</th>
                         <th scope="col">Puntos</th>
                     </tr>
@@ -114,6 +113,8 @@
                 </table>
             `);
             let carrera = $("#carrera").val();
+            carrera = carrera.split(" ");
+            console.log(carrera);
             $.getJSON(`https://ergast.com/api/f1/current/${carrera[0]}/results.json`, (respuesta) => {
                 for (const resultado of respuesta.MRData.RaceTable.Races[0].Results) {
                     $("#datos").append(`
@@ -122,7 +123,6 @@
                         <td>${resultado.Driver.givenName}</td>
                         <td>${resultado.Constructor.name}</td>
                         <td>${resultado.grid}</td>
-                        <td>${resultado.Time.time}</td>
                         <td>${resultado.status}</td>
                         <td>+${resultado.points}</td>
                     </tr>
