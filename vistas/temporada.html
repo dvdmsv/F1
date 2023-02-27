@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap-grid.css">
+    <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css">
+    <link rel="stylesheet" href="../node_modules/paginationjs/dist/pagination.css">
+    <script src="../node_modules/jquery/dist/jquery.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    <script src="../node_modules/paginationjs/dist/pagination.js"></script>
+    <script src="../node_modules/chart.js/dist/chart.umd.js"></script>
+    <title>Info Piloto</title>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg shadow-sm p-1 mb-5 bg-body rounded sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="../index.html"><img src="../img/f1Logo3.png" alt="f1Logo" width="90"></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="../index.html">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="pilotos.html">Pilotos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="escuderias.html">Escuderías</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="circuitos.html">Circuitos</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container" id="info">
+        <p class="h6">algo</p>
+    </div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <form>
+                <div class="form-group">
+                    <label>Carrera</label>
+                    <select name="temporada" id="carrera">
+                    </select>
+                </div>
+                <button type="button" class="btn btn-primary mt-3" id="buscar">Buscar</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="container mb-5" id="titulo">
+    </div>
+
+    <div class="container" id="tablaResultados">
+    </div>
+
+    <div class="container mb-5" id="titulo2">
+    </div>
+    <div class="container" id="tablaClasificacion">
+    </div>
+
+    <script>
+        //Cuando se cargue el documento
+        $(document).ready(() => {
+            //Se solicita el json de temporadas
+            $.getJSON(`https://ergast.com/api/f1/current.json?limit=1000`, (respuesta) => {
+                for (const carrera of respuesta.MRData.RaceTable.Races) {
+                    $("#carrera").append(`
+                        <option>${carrera.round}º ${carrera.Circuit.circuitName}</option>
+                    `);
+                }
+            });
+        });
+
+        $("#buscar").click(()=>{
+            $.getJSON(`https://ergast.com/api/f1/current/1.json`, (respuesta) => {
+                for (const carrera of respuesta.MRData.RaceTable.Races) {
+                    $("#titulo").empty();
+                    $("#titulo").append(`
+                        <h1 class="display-3" style="text-align: center;">Fecha ${carrera.date}</h1>
+                    `);
+                }
+            });
+            $("#tablaResultados").empty();
+            $("#tablaResultados").append(`
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Posicion</th>
+                        <th scope="col">Piloto</th>
+                        <th scope="col">Escudería</th>
+                        <th scope="col">Pos. Salida</th>
+                        <th scope="col">Tiempo</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Puntos</th>
+                    </tr>
+                    </thead>
+                    <tbody id="datos">
+                    </tbody>
+                </table>
+            `);
+            let carrera = $("#carrera").val();
+            $.getJSON(`https://ergast.com/api/f1/current/${carrera[0]}/results.json`, (respuesta) => {
+                for (const resultado of respuesta.MRData.RaceTable.Races[0].Results) {
+                    $("#datos").append(`
+                    <tr>
+                        <td>${resultado.position}</td>
+                        <td>${resultado.Driver.givenName}</td>
+                        <td>${resultado.Constructor.name}</td>
+                        <td>${resultado.grid}</td>
+                        <td>${resultado.Time.time}</td>
+                        <td>${resultado.status}</td>
+                        <td>+${resultado.points}</td>
+                    </tr>
+                    `);
+                }
+            });
+
+
+            $("#tablaClasificacion").empty();
+            $("#tablaClasificacion").append(`
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Posicion</th>
+                        <th scope="col">Piloto</th>
+                        <th scope="col">Escudería</th>
+                        <th scope="col">Puntos</th>
+                        <th scope="col">Victorias</th>
+                    </tr>
+                    </thead>
+                    <tbody id="clasifica">
+                    </tbody>
+                </table>
+            `);
+            $.getJSON(`https://ergast.com/api/f1/current/${carrera[0]}/driverStandings.json`, (respuesta) => {
+                $("#titulo2").empty();
+                    $("#titulo2").append(`
+                        <h1 class="display-3" style="text-align: center;">Clasificación</h1>
+                    `);
+                for (const resultado of respuesta.MRData.StandingsTable.StandingsLists[0].DriverStandings) {
+                    //console.log(resultado.Constructors[0].name);
+                    $("#clasifica").append(`
+                    <tr>
+                        <td>${resultado.position}</td>
+                        <td>${resultado.Driver.givenName}</td>
+                        <td>${resultado.Constructors[0].name}</td>
+                        <td>${resultado.points}</td>
+                        <td>${resultado.wins}</td>
+                    </tr>
+                    `);
+                }
+            });
+            
+        });
+
+    </script>
+</body>
+
+</html>
